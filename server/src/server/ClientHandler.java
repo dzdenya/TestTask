@@ -7,21 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 import java.util.Scanner;
-
-import static javax.print.attribute.standard.MediaSizeName.D;
 
 
 public class ClientHandler extends Thread {
     Socket socket;
     Main main;
-    private List<Bank> banks;
-
-    private char pathSeparator,
-            extensionSeparator;
-
-
 
     public ClientHandler(Socket socket, Main main) {
         this.socket = socket;
@@ -62,19 +53,21 @@ public class ClientHandler extends Thread {
                     int last = line.length()-1;
                     String worldDepositor = line.substring(16, last);
                     System.out.println("Ищем по:"+worldDepositor);
-                    String sDepositor = main.getinfoDepositor(worldDepositor);
+                    String sDepositor = main.getInfoDepositor(worldDepositor);
                     out.println(sDepositor);
                 }
                 if (line.startsWith("show type ")){
                     int last = line.length()-1;
                     String worldType = line.substring(11, last);
-                    String sType = main.getshowType(worldType);
+                    System.out.println("Ищем по:"+worldType);
+                    String sType = main.getShowType(worldType);
                     out.println(sType);
                 }
                 if (line.startsWith("show bank ")) {
                     int last = line.length()-1;
                     String worldBank = line.substring(11, last);
-                    String sBank = main.getshowBank(worldBank);
+                    System.out.println("Ищем по:"+worldBank);
+                    String sBank = main.getShowBank(worldBank);
                     out.println(sBank);
                 }
                 if (line.startsWith("add ")) {
@@ -86,11 +79,10 @@ public class ClientHandler extends Thread {
                     }
                 }
                 if (line.startsWith("delete ")) {
-                    if (main.deleteBank(line)) {
-                        out.println("Удалено: " + line);
-                    } else {
-                        out.println("Введите в формате:delete <accounr id>");
-                    }
+                    int last = line.length()-1;
+                    String worldDeleteBank = line.substring(8, last);
+                    String sDelete = main.getDeleteBank(worldDeleteBank);
+                    out.println("Удалено: " + sDelete);
                 }
                 if ("bye".equals(line)) break;
             }

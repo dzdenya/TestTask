@@ -6,9 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.lang.System.out;
 
 
 public class Main {
@@ -26,7 +24,7 @@ public class Main {
             props.load(new FileReader("server.ini"));
             ServerSocket ss = new ServerSocket(1234);
             banks = readInfo(props.getProperty("filename"));
-            while(true) {
+            while (true) {
                 Socket socket = ss.accept();
                 ClientHandler clientHandler = new ClientHandler(socket, this);
                 clientHandler.start();
@@ -75,57 +73,65 @@ public class Main {
     }
 
     public String getInfoAccount(String line) {
-//        int last = line.length()-1;
-//        String worldInfoAccount = null;
-//        int chislo = Integer.parseInt(worldInfoAccount);
         List<Bank> result = new ArrayList<>();
+        int chislo = Integer.parseInt(line);
+        System.out.println("число "+chislo);
         StringBuilder sb3 = new StringBuilder("<Информация указаного вклада>~");
         for (Bank bank : banks) {
-//            if (bank.getAccountId().equals(line));
-                result.add(bank);
-            }
-
-        return result.toString();
-        }
-
-
-    public String getinfoDepositor (String line) {
-        List<Bank> result = new ArrayList<>();
-        StringBuilder sb3 = new StringBuilder("<Список всех вкладчиков указаного типа>~");
-        for (Bank bank : banks) {
-            if (bank.getDepositor().equals(line)) {
-                result.add(bank);
-                return result.toString();
-            } else return String.valueOf("По запросу ничего не найдено. " +
-                    "Введите в формате:info depositor <depositor>");
+            if (bank.getAccountId() == (chislo)) {
+            result.add(bank);
+            return result.toString();
+            }else
+                return sb3.append("По запросу ничего не найдено. "+
+            "Введите в формате:info account <account id>~").toString();
         }
         return result.toString();
     }
 
-    public String getshowType(String line) {
+
+
+    public String getInfoDepositor(String line) {
+        List<Bank> result = new ArrayList<>();
+        StringBuilder sb3 = new StringBuilder("<Список всех вкладчиков указаного типа>~");
+        for (Bank bank : banks) {
+            System.out.println(line);
+            if (bank.getDepositor().equals(line)) {
+                result.add(bank);
+                return result.toString();
+            } else
+                return sb3.append("По запросу ничего не найдено. " +
+                    "Введите в формате:info depositor <depositor>~").toString();
+        }
+        return result.toString();
+    }
+
+    public String getShowType(String line) {
         List<Bank> result = new ArrayList<>();
         StringBuilder sb3 = new StringBuilder("<Список всех банков указаного типа>~");
         for (Bank bank : banks) {
             if (bank.getType().equals(line)) {
                 result.add(bank);
-                return result.toString();
-            } else return String.valueOf("По запросу ничего не найдено. " +
-                    "Введите в формате:show type <type>");
-        }
-        return result.toString();
+                sb3.append(result.toString()).append("~");
+            }
+            else
+                return sb3.append("По запросу ничего не найдено. " +
+                        "Введите в формате:show type <type>~").toString();
+            }
+        return sb3.toString();
     }
 
-    public String getshowBank(String line) {
+    public String getShowBank(String line) {
         List<Bank> result = new ArrayList<>();
         StringBuilder sb3 = new StringBuilder("<Список всех банков указаного типа>~");
         for (Bank bank : banks) {
             if (bank.getNameBank().equals(line)) {
                 result.add(bank);
-                return result.toString();
-            }else return String.valueOf("По запросу ничего не найдено. " +
-                    "Введите в формате:show bank <bank>");
+                sb3.append(result.toString()).append("~");
+            }else
+                return sb3.append("По запросу ничего не найдено. " +
+                    "Введите в формате:show bank <bank>~").toString();
         }
-        return result.toString();
+        return sb3.toString();
     }
 
     public boolean addBank(String line) {
@@ -139,16 +145,22 @@ public class Main {
         }
     }
 
-    public boolean deleteBank(String line) {
-        StringBuilder sb3 = new StringBuilder("<Список всех банков указаного типа>~");
+    public String getDeleteBank(String line) {
+        List<Bank> result = new ArrayList<>();
+        int chislo = Integer.parseInt(line);
+        StringBuilder sb3 = new StringBuilder("<Информация указаного вклада>~");
         for (Bank bank : banks) {
-            bank.getAccountId();
-            banks.remove(bank);
-            storeBanks();
-            sb3.append(bank.toString()).append("~");
+            if (bank.getAccountId() == (chislo)) {
+                result.add(bank);
+                banks.remove(bank);
+                storeBanks();
+                sb3.append(bank.toString()).append("~");
+                return result.toString();
+            } else
+                return sb3.append("По запросу ничего не найдено. " +
+                    "Введите в формате:delete <account id>~").toString();
         }
-        out.println(sb3);
-        return Boolean.parseBoolean(sb3.toString());
+        return sb3.toString();
     }
 
     private void storeBanks() {
@@ -160,8 +172,5 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
-
 }
 
